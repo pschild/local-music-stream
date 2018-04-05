@@ -7,10 +7,6 @@ const http = require('http');
 const https = require('https');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
-const privateKey  = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/fullchain.pem', 'utf8');
-const credentials = {key: privateKey, cert: certificate};
-
 const app = express();
 /*
 app.use(basicAuth({
@@ -49,8 +45,14 @@ app.get('/play/:fileName', function (req, res) {
     fs.createReadStream(filePath).pipe(res);
 });
 
-let httpServer = http.createServer(app);
-let httpsServer = https.createServer(credentials, app);
+if (process.env.NODE_ENV === `production`) {
+    const privateKey  = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/fullchain.pem', 'utf8');
+    const credentials = {key: privateKey, cert: certificate};
 
-httpServer.listen(3000, () => console.log('HTTP app listening on port 3000!'));
-httpsServer.listen(3443, () => console.log('HTTPS app listening on port 3443!'));
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(3443, () => console.log('HTTPS app listening on port 3443!'));
+} else {
+    const httpServer = http.createServer(app);
+    httpServer.listen(3000, () => console.log('HTTP app listening on port 3000!'));
+}
