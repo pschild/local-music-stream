@@ -4,5 +4,3 @@ dist/
 npm-debug.log
 
 /.env
-
-/media
