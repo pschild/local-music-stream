@@ -7,8 +7,8 @@ const http = require('http');
 const https = require('https');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
-const privateKey  = fs.readFileSync('/home/pi/dev/dehydrated/certs/pschild.duckdns.org/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/home/pi/dev/dehydrated/certs/pschild.duckdns.org/fullchain.pem', 'utf8');
+const privateKey  = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/fullchain.pem', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
 
 const app = express();
