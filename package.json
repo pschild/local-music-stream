@@ -1,0 +1,25 @@
+{
+  "name": "local-music-stream",
+  "version": "0.0.1",
+  "description": "",
+  "repository": "https://github.com/pschild/local-music-stream.git",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-alexa": "gulp build-alexa"
+  },
+  "author": "Philippe Schild",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2",
+    "express-basic-auth": "^1.1.4",
+    "string-similarity": "^1.2.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-tap": "^1.0.1",
+    "gulp-zip": "^4.1.0"
+  }
+}
