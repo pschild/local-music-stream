@@ -10,19 +10,43 @@ const handlers = {
         this.emit(':ask', welcomeMessage, welcomeMessage);
     },
 
-    'PlayMusicIntent': function() {
+    'PlaySongIntent': function() {
         const songTitle = this.event.request.intent.slots.SONG_TITLE.value;
         console.log(songTitle);
 
-        searchMp3(songTitle, (response) => {
+        search(songTitle, (response) => {
             if (response.success) {
                 console.log(response.url);
-                this.response.speak('ab geht die post').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
+                this.response.speak('Ein bestimmtes Lied').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
                 this.emit(':responseReady');
             } else {
                 this.emit(':tell', 'Das habe ich nicht verstanden.');
             }
         });
+    },
+
+    'PlaySongsOfArtistIntent': function() {
+        const artistName = this.event.request.intent.slots.ARTIST.value;
+        console.log(artistName);
+
+        search(artistName, (response) => {
+            if (response.success) {
+                console.log(response.multiple);
+                const firstSong = response.multiple[0];
+                this.response.speak(`${response.multiple.length} Lieder eines Sängers`).audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
+
+                for (let i = 1; i < response.multiple.length; i++) {
+                    this.audioPlayerPlay('ENQUEUE', response.multiple[i], response.multiple[i], null, 0);
+                }
+                this.emit(':responseReady');
+            } else {
+                this.emit(':tell', 'Das habe ich nicht verstanden.');
+            }
+        });
+    },
+
+    'PlaybackFinished': function() {
+        console.log('The stream comes to an end');
     },
 
     'AMAZON.ResumeIntent': function () {
@@ -82,7 +106,7 @@ exports.handler = function(event, context, callback) {
     alexa.execute();
 };
 
-function searchMp3(payload, callback) {
+function search(payload, callback) {
     const body = JSON.stringify({'payload': payload});
     const authToken = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
 

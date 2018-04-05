@@ -27,11 +27,12 @@ app.post('/search', function (req, res) {
         .filter(fileName => fileName.includes('mp3'))
         .map(fileName => fileName.slice(0, -4));
     const matches = stringSimilarity.findBestMatch(songTitle, mp3Files);
-    console.log(songTitle, matches);
+    console.log(songTitle, matches.ratings, matches.ratings.filter(match => match.rating >= 0.5).map(match => match.target).length);
 
     res.json({
         'success': true,
-        'url': `https://pschild.duckdns.org:3443/play/${matches.bestMatch.target}`
+        'url': `https://pschild.duckdns.org:3443/play/${matches.bestMatch.target}`,
+        'multiple': matches.ratings.filter(match => match.rating >= 0.5).map(match => `https://pschild.duckdns.org:3443/play/${match.target}`)
     });
 });
 
