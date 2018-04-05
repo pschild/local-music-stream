@@ -5,6 +5,7 @@ const basicAuth = require('express-basic-auth');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const stringSimilarity = require('string-similarity');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
 const app = express();
@@ -20,12 +21,17 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.post('/search', function (req, res) {
     console.log('accessed /search with '+req.method+'@' + (new Date()).toTimeString());
     console.log(`body.payload: ${JSON.stringify(req.body.payload)}`);
+    const songTitle = req.body.payload;
 
-    // TODO: search with string-similarity
+    const mp3Files = fs.readdirSync('./media')
+        .filter(fileName => fileName.includes('mp3'))
+        .map(fileName => fileName.slice(0, -4));
+    const matches = stringSimilarity.findBestMatch(songTitle, mp3Files);
+    console.log(songTitle, matches);
 
     res.json({
         'success': true,
-        'url': 'https://pschild.duckdns.org:3443/play/Havana'
+        'url': `https://pschild.duckdns.org:3443/play/${matches.bestMatch.target}`
     });
 });
 
@@ -34,7 +40,7 @@ app.get('/play/:fileName', function (req, res) {
     console.log(`fileName param: ${req.params.fileName}`);
 
     const fileName = req.params.fileName; // TODO: take param into account
-    const filePath = `media/${fileName}.mp3`;
+    const filePath = `./media/${fileName}.mp3`;
     const stat = fs.statSync(filePath);
 
     res.writeHead(200, {
