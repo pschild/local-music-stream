@@ -51,14 +51,14 @@ app.get('/play/:fileName', function (req, res) {
     fs.createReadStream(filePath).pipe(res);
 });
 
-if (process.env.NODE_ENV === `production`) {
+if (process.env.NODE_ENV === `development`) {
+    const httpServer = http.createServer(app);
+    httpServer.listen(3000, () => console.log('HTTP app listening on port 3000!'));
+} else {
     const privateKey  = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/privkey.pem', 'utf8');
     const certificate = fs.readFileSync('/home/pi/dehydrated/certs/pschild.duckdns.org/fullchain.pem', 'utf8');
     const credentials = {key: privateKey, cert: certificate};
 
     const httpsServer = https.createServer(credentials, app);
     httpsServer.listen(3443, () => console.log('HTTPS app listening on port 3443!'));
-} else {
-    const httpServer = http.createServer(app);
-    httpServer.listen(3000, () => console.log('HTTP app listening on port 3000!'));
 }
