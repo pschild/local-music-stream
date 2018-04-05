@@ -12,18 +12,33 @@ const certificate = fs.readFileSync('/home/pi/dev/dehydrated/certs/pschild.duckd
 const credentials = {key: privateKey, cert: certificate};
 
 const app = express();
+/*
 app.use(basicAuth({
     authorizer: (username, password) => username === process.env.USERNAME && password === process.env.PASSWORD,
     unauthorizedResponse: (req) => req.auth ? 'Invalid credentials!' : 'No credentials provided!'
 }));
+*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get('/mp3', function (req, res) {
-    console.log('accessed with '+req.method+'@' + (new Date()).toTimeString());
+app.post('/search', function (req, res) {
+    console.log('accessed /search with '+req.method+'@' + (new Date()).toTimeString());
+    console.log(`body.payload: ${req.body.payload}`);
 
-    var filePath = 'media/Havana.mp3';
-    var stat = fs.statSync(filePath);
+    // TODO: search with string-similarity
+
+    res.json({
+        'success': true,
+        'url': 'https://pschild.duckdns.org:3443/media/Havana.mp3'
+    });
+});
+
+app.get('/play/:url', function (req, res) {
+    console.log('accessed /play with '+req.method+'@' + (new Date()).toTimeString());
+    console.log(`url param: ${req.params.url}`);
+
+    const filePath = 'media/Havana.mp3'; // TODO: take param into account
+    const stat = fs.statSync(filePath);
 
     res.writeHead(200, {
         'Content-Type': 'audio/mpeg',
