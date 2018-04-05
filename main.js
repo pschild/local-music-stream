@@ -23,21 +23,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/search', function (req, res) {
     console.log('accessed /search with '+req.method+'@' + (new Date()).toTimeString());
-    console.log(`body.payload: ${req.body.payload}`);
+    console.log(`body.payload: ${JSON.stringify(req.body.payload)}`);
 
     // TODO: search with string-similarity
 
     res.json({
         'success': true,
-        'url': 'https://pschild.duckdns.org:3443/media/Havana.mp3'
+        'url': 'https://pschild.duckdns.org:3443/play/Havana'
     });
 });
 
-app.get('/play/:url', function (req, res) {
+app.get('/play/:fileName', function (req, res) {
     console.log('accessed /play with '+req.method+'@' + (new Date()).toTimeString());
-    console.log(`url param: ${req.params.url}`);
+    console.log(`fileName param: ${req.params.fileName}`);
 
-    const filePath = 'media/Havana.mp3'; // TODO: take param into account
+    const fileName = req.params.fileName; // TODO: take param into account
+    const filePath = `media/${fileName}.mp3`;
     const stat = fs.statSync(filePath);
 
     res.writeHead(200, {

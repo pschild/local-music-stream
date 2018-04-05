@@ -11,11 +11,12 @@ const handlers = {
     },
 
     'PlayMusicIntent': function() {
-        const songTitle = this.event.request.intent.slots.SONG_TITLE;
+        const songTitle = this.event.request.intent.slots.SONG_TITLE.value;
         console.log(songTitle);
 
         searchMp3(songTitle, (response) => {
             if (response.success) {
+                console.log(response.url);
                 this.response.speak('ab geht die post').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
                 this.emit(':responseReady');
             } else {
