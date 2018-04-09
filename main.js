@@ -6,6 +6,7 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const stringSimilarity = require('string-similarity');
+const _ = require('lodash');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
 const app = express();
@@ -27,12 +28,15 @@ app.post('/search', function (req, res) {
         .filter(fileName => fileName.includes('mp3'))
         .map(fileName => fileName.slice(0, -4));
     const matches = stringSimilarity.findBestMatch(songTitle, mp3Files);
-    console.log(songTitle, matches.ratings, matches.ratings.filter(match => match.rating >= 0.5).map(match => match.target).length);
+    const filteredMatches = matches.ratings.filter(match => match.rating >= 0.4);
+    const sortedByRatings = _.orderBy(filteredMatches, ['rating'], ['desc']);
+    const mappedToUrl = sortedByRatings.map(match => `https://pschild.duckdns.org:3443/play/${match.target}`);
+    console.log(sortedByRatings);
 
     res.json({
         'success': true,
         'url': `https://pschild.duckdns.org:3443/play/${matches.bestMatch.target}`,
-        'multiple': matches.ratings.filter(match => match.rating >= 0.5).map(match => `https://pschild.duckdns.org:3443/play/${match.target}`)
+        'multiple': mappedToUrl
     });
 });
 
