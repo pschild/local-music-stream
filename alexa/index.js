@@ -12,12 +12,12 @@ const handlers = {
 
     'PlaySongIntent': function() {
         const songTitle = this.event.request.intent.slots.SONG_TITLE.value;
-        console.log(songTitle);
+        console.log('PlaySongIntent', songTitle);
 
         search(songTitle, (response) => {
             if (response.success) {
                 console.log(response.url);
-                this.response.speak('Ein bestimmtes Lied').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
+                this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
                 this.emit(':responseReady');
             } else {
                 this.emit(':tell', 'Das habe ich nicht verstanden.');
@@ -27,17 +27,19 @@ const handlers = {
 
     'PlaySongsOfArtistIntent': function() {
         const artistName = this.event.request.intent.slots.ARTIST.value;
-        console.log(artistName);
+        console.log('PlaySongsOfArtistIntent', artistName);
 
         search(artistName, (response) => {
             if (response.success) {
-                console.log(response.multiple);
-                const firstSong = response.multiple[0];
-                this.response.speak(`${response.multiple.length} Lieder eines Sängers`).audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
+                console.log('found songs', response.multiple);
 
-                for (let i = 1; i < response.multiple.length; i++) {
-                    this.audioPlayerPlay('ENQUEUE', response.multiple[i], response.multiple[i], null, 0);
-                }
+                this.attributes['currentSongIndex'] = 0;
+                this.attributes['songUrls'] = response.multiple;
+
+                this.response
+                    .speak(`Ich habe ${response.multiple.length} Lieder von ${artistName} gefunden. Los gehts`)
+                    .audioPlayerPlay('REPLACE_ALL', response.multiple[0], response.multiple[0], null, 0);
+
                 this.emit(':responseReady');
             } else {
                 this.emit(':tell', 'Das habe ich nicht verstanden.');
@@ -45,8 +47,28 @@ const handlers = {
         });
     },
 
+    'PlaybackNearlyFinished': function() {
+        const songUrls = this.attributes['songUrls'];
+        const currentSongIndex = this.attributes['currentSongIndex'];
+        if (currentSongIndex < songUrls.length - 1) {
+            const nextSongIndex = currentSongIndex + 1;
+            this.attributes['currentSongIndex'] = nextSongIndex;
+
+            this.response.audioPlayerPlay('ENQUEUE', this.attributes['songUrls'][nextSongIndex], this.attributes['songUrls'][nextSongIndex], this.attributes['songUrls'][currentSongIndex], 0);
+            this.emit(':responseReady');
+        }
+    },
+
     'PlaybackFinished': function() {
-        console.log('The stream comes to an end');
+        console.log('The stream comes to an end: PlaybackFinished');
+    },
+
+    'SessionEndedRequest': function() {
+        this.emit(':tell', 'SessionEndedRequest', 'SessionEndedRequest');
+    },
+
+    'Unhandled': function() {
+        this.emit(':tell', 'Unhandled', 'Unhandled');
     },
 
     'AMAZON.ResumeIntent': function () {
@@ -102,6 +124,7 @@ const handlers = {
 exports.handler = function(event, context, callback) {
     const alexa = Alexa.handler(event, context, callback);
     alexa.appId = 'amzn1.ask.skill.1de6736f-14a6-4d7d-8949-d67e55da2534';
+    alexa.dynamoDBTableName = 'LocalStateTable';
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
