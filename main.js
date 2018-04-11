@@ -40,9 +40,10 @@ app.post('/search', function (req, res) {
     });
 });
 
-app.get('/play/:fileName', function (req, res) {
+app.get('/play/:fileName/:authToken', function (req, res) {
     console.log('accessed /play with '+req.method+'@' + (new Date()).toTimeString());
     console.log(`fileName param: ${req.params.fileName}`);
+    console.log(`authToken param: ${req.params.authToken}`);
 
     const fileName = req.params.fileName; // TODO: take param into account
     const filePath = `./media/${fileName}.mp3`;

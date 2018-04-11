@@ -16,7 +16,8 @@ const handlers = {
 
         search(songTitle, (response) => {
             if (response.success) {
-                console.log(response.url);
+                const authToken = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
+                console.log(`${response.url}/${authToken}`);
                 this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
                 this.emit(':responseReady');
             } else {
