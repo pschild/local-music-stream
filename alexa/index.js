@@ -17,8 +17,9 @@ const handlers = {
         search(songTitle, (response) => {
             if (response.success) {
                 const authToken = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
-                console.log(`${response.url}/${authToken}`);
-                this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', response.url, response.url, null, 0);
+                const urlWithAuthToken = `${response.url}/${authToken}`;
+                console.log(urlWithAuthToken);
+                this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
                 this.emit(':responseReady');
             } else {
                 this.emit(':tell', 'Das habe ich nicht verstanden.');
@@ -35,11 +36,11 @@ const handlers = {
                 console.log('found songs', response.multiple);
 
                 this.attributes['currentSongIndex'] = 0;
-                this.attributes['songUrls'] = response.multiple;
+                this.attributes['songUrls'] = response.multiple; // TODO: authorization
 
                 this.response
                     .speak(`Ich habe ${response.multiple.length} Lieder von ${artistName} gefunden. Los gehts`)
-                    .audioPlayerPlay('REPLACE_ALL', response.multiple[0], response.multiple[0], null, 0);
+                    .audioPlayerPlay('REPLACE_ALL', response.multiple[0], response.multiple[0], null, 0); // TODO: authorization
 
                 this.emit(':responseReady');
             } else {

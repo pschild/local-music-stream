@@ -45,10 +45,11 @@ app.get('/play/:fileName/:authToken', function (req, res) {
     console.log(`fileName param: ${req.params.fileName}`);
     console.log(`authToken param: ${req.params.authToken}`);
 
+    // Basic Authorization is done via a url param, because Alexa cannot send HTTP headers when streaming a file
     const authTokenFromClient = req.params.authToken;
     const authTokenFromServerEnvironment = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
     if (!authTokenFromClient || authTokenFromServerEnvironment !== authTokenFromClient) {
-        res.send(401, `Invalid authorization param!`);
+        res.status(401).send(`Invalid authorization param!`);
         return;
     }
 
