@@ -16,9 +16,7 @@ const handlers = {
 
         search(songTitle, (response) => {
             if (response.success) {
-                const authToken = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
-                const urlWithAuthToken = `${response.url}/${authToken}`;
-                console.log(urlWithAuthToken);
+                const urlWithAuthToken = `${response.url}/${buildAuthToken()}`;
                 this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
                 this.emit(':responseReady');
             } else {
@@ -36,11 +34,11 @@ const handlers = {
                 console.log('found songs', response.multiple);
 
                 this.attributes['currentSongIndex'] = 0;
-                this.attributes['songUrls'] = response.multiple; // TODO: authorization
+                this.attributes['songUrls'] = response.multiple.map(url => `${url}/${buildAuthToken()}`);
 
                 this.response
-                    .speak(`Ich habe ${response.multiple.length} Lieder von ${artistName} gefunden. Los gehts`)
-                    .audioPlayerPlay('REPLACE_ALL', response.multiple[0], response.multiple[0], null, 0); // TODO: authorization
+                    .speak(`Ich habe ${this.attributes['songUrls'].length} Lieder von ${artistName} gefunden. Los gehts`)
+                    .audioPlayerPlay('REPLACE_ALL', this.attributes['songUrls'][0], this.attributes['songUrls'][0], null, 0);
 
                 this.emit(':responseReady');
             } else {
@@ -130,6 +128,10 @@ exports.handler = function(event, context, callback) {
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
+
+function buildAuthToken() {
+    return Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
+}
 
 function search(payload, callback) {
     const body = JSON.stringify({'payload': payload});
