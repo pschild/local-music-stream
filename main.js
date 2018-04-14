@@ -22,6 +22,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.post('/search', function (req, res) {
     console.log('accessed /search with '+req.method+'@' + (new Date()).toTimeString());
     console.log(`body.payload: ${JSON.stringify(req.body.payload)}`);
+    if (!req.body.payload) {
+        res.json({
+            'success': false,
+            'errorMessage': 'Ich habe deinen Suchbegriff nicht verstanden.'
+        });
+    }
+
     const songTitle = req.body.payload;
 
     const allFiles = walkSync(process.env.ROOT_MEDIA_FOLDER);
@@ -112,6 +119,13 @@ const walkSync = function(dir, filelist) {
 const getSongInformation = function(fileName) {
     const SEPARATOR = '-';
     const separatorIndex = fileName.indexOf(SEPARATOR);
+    if (separatorIndex < 0) {
+        return {
+            artist: null,
+            title: fileName
+        }
+    }
+
     return {
         artist: fileName.substr(0, separatorIndex).trim(),
         title: fileName.substr(separatorIndex + 1).trim()
