@@ -24,7 +24,7 @@ app.post('/search', function (req, res) {
     console.log(`body.payload: ${JSON.stringify(req.body.payload)}`);
     const songTitle = req.body.payload;
 
-    const allFiles = walkSync('media');
+    const allFiles = walkSync(process.env.ROOT_MEDIA_FOLDER);
     const mp3Files = allFiles.filter(file => file.fileName.includes('mp3'));
     const mp3FileNamesWithoutExtension = mp3Files.map(file => file.fileName.slice(0, -4));
 
