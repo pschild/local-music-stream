@@ -29,7 +29,7 @@ app.post('/search', function (req, res) {
     const mp3FileNamesWithoutExtension = mp3Files.map(file => file.fileName.slice(0, -4));
 
     const matches = stringSimilarity.findBestMatch(songTitle, mp3FileNamesWithoutExtension);
-    const filteredMatches = matches.ratings.filter(match => match.rating >= 0);
+    const filteredMatches = matches.ratings.filter(match => match.rating >= 0.4);
     const sortedByRatings = _.orderBy(filteredMatches, ['rating'], ['desc']);
     const sortedResult = sortedByRatings.map(match => {
         const fileName = match.target;
@@ -69,10 +69,10 @@ app.get('/play/:directory/:fileName/:authToken', function (req, res) {
     // Basic Authorization is done via a url param, because Alexa cannot send HTTP headers when streaming a file
     const authTokenFromClient = req.params.authToken;
     const authTokenFromServerEnvironment = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
-    /*if (!authTokenFromClient || authTokenFromServerEnvironment !== authTokenFromClient) {
+    if (!authTokenFromClient || authTokenFromServerEnvironment !== authTokenFromClient) {
         res.status(401).send(`Invalid authorization param!`);
         return;
-    }*/
+    }
 
     const fileName = req.params.fileName;
     const directory = req.params.directory;

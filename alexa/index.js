@@ -16,7 +16,7 @@ const handlers = {
 
         search(songTitle, (response) => {
             if (response.success) {
-                const urlWithAuthToken = `${response.url}/${buildAuthToken()}`;
+                const urlWithAuthToken = `${response.bestMatch.url}/${buildAuthToken()}`;
                 this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
                 this.emit(':responseReady');
             } else {
@@ -31,10 +31,10 @@ const handlers = {
 
         search(artistName, (response) => {
             if (response.success) {
-                console.log('found songs', response.multiple);
+                console.log('found songs', response.allMatches);
 
                 this.attributes['currentSongIndex'] = 0;
-                this.attributes['songUrls'] = response.multiple.map(url => `${url}/${buildAuthToken()}`);
+                this.attributes['songUrls'] = response.allMatches.map(match => `${match.url}/${buildAuthToken()}`);
 
                 this.response
                     .speak(`Ich habe ${this.attributes['songUrls'].length} Lieder von ${artistName} gefunden. Los gehts`)
