@@ -23,7 +23,7 @@ const handlers = {
                     .audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
                 this.emit(':responseReady');
             } else {
-                this.emit(':tell', `Ups. ${response.errorMessage}`);
+                this.emit(':ask', `Ups. ${response.errorMessage}. Wie war das?`);
             }
         });
     },
@@ -40,12 +40,12 @@ const handlers = {
                 this.attributes['songUrls'] = response.allMatches.map(match => `${match.url}/${buildAuthToken()}`);
 
                 this.response
-                    .speak(`Ich habe ${this.attributes['songUrls'].length} Lieder von ${artistName} gefunden. Los gehts`)
+                    .speak(`Ich habe ${this.attributes['songUrls'].length} Lieder von ${artistName} gefunden.`)
                     .audioPlayerPlay('REPLACE_ALL', this.attributes['songUrls'][0], this.attributes['songUrls'][0], null, 0);
 
                 this.emit(':responseReady');
             } else {
-                this.emit(':tell', 'Das habe ich nicht verstanden.');
+                this.emit(':ask', `Ups. ${response.errorMessage}. Wie bitte?`);
             }
         });
     },

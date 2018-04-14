@@ -25,7 +25,7 @@ app.post('/search', function (req, res) {
     if (!req.body.payload) {
         res.json({
             'success': false,
-            'errorMessage': 'Ich habe deinen Suchbegriff nicht verstanden.'
+            'errorMessage': 'Ich habe deinen Suchbegriff nicht verstanden'
         });
     }
 
