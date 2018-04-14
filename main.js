@@ -33,9 +33,12 @@ app.post('/search', function (req, res) {
     const sortedByRatings = _.orderBy(filteredMatches, ['rating'], ['desc']);
     const sortedResult = sortedByRatings.map(match => {
         const fileName = match.target;
+        const songInformation = getSongInformation(fileName);
         const directory = mp3Files.find(mp3File => mp3File.fileName.includes(match.target)).directory;
         return {
             fileName: fileName,
+            artist: songInformation.artist,
+            title: songInformation.title,
             directory: directory,
             url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
             rating: match.rating
@@ -44,9 +47,12 @@ app.post('/search', function (req, res) {
     console.log(sortedResult);
 
     const fileName = matches.bestMatch.target;
+    const songInformation = getSongInformation(fileName);
     const directory = mp3Files.find(mp3File => mp3File.fileName.includes(matches.bestMatch.target)).directory;
     const bestMatch = {
         fileName: fileName,
+        artist: songInformation.artist,
+        title: songInformation.title,
         directory: directory,
         url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
         rating: matches.bestMatch.rating
@@ -101,6 +107,15 @@ const walkSync = function(dir, filelist) {
         }
     });
     return filelist;
+};
+
+const getSongInformation = function(fileName) {
+    const SEPARATOR = '-';
+    const separatorIndex = fileName.indexOf(SEPARATOR);
+    return {
+        artist: fileName.substr(0, separatorIndex).trim(),
+        title: fileName.substr(separatorIndex + 1).trim()
+    };
 };
 
 if (process.env.NODE_ENV === `development`) {

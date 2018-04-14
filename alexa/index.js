@@ -17,7 +17,7 @@ const handlers = {
         search(songTitle, (response) => {
             if (response.success) {
                 const urlWithAuthToken = `${response.bestMatch.url}/${buildAuthToken()}`;
-                this.response.speak('Los gehts').audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
+                this.response.speak(`${response.bestMatch.title} von ${response.bestMatch.artist}`).audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
                 this.emit(':responseReady');
             } else {
                 this.emit(':tell', 'Das habe ich nicht verstanden.');
