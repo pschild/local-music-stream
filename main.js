@@ -24,37 +24,59 @@ app.post('/search', function (req, res) {
     console.log(`body.payload: ${JSON.stringify(req.body.payload)}`);
     const songTitle = req.body.payload;
 
-    const mp3Files = fs.readdirSync('./media')
-        .filter(fileName => fileName.includes('mp3'))
-        .map(fileName => fileName.slice(0, -4));
-    const matches = stringSimilarity.findBestMatch(songTitle, mp3Files);
-    const filteredMatches = matches.ratings.filter(match => match.rating >= 0.4);
+    const allFiles = walkSync('media');
+    const mp3Files = allFiles.filter(file => file.fileName.includes('mp3'));
+    const mp3FileNamesWithoutExtension = mp3Files.map(file => file.fileName.slice(0, -4));
+
+    const matches = stringSimilarity.findBestMatch(songTitle, mp3FileNamesWithoutExtension);
+    const filteredMatches = matches.ratings.filter(match => match.rating >= 0);
     const sortedByRatings = _.orderBy(filteredMatches, ['rating'], ['desc']);
-    const mappedToUrl = sortedByRatings.map(match => `https://pschild.duckdns.org:3443/play/${match.target}`);
-    console.log(sortedByRatings);
+    const sortedResult = sortedByRatings.map(match => {
+        const fileName = match.target;
+        const directory = mp3Files.find(mp3File => mp3File.fileName.includes(match.target)).directory;
+        return {
+            fileName: fileName,
+            directory: directory,
+            url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
+            rating: match.rating
+        }
+    });
+    console.log(sortedResult);
+
+    const fileName = matches.bestMatch.target;
+    const directory = mp3Files.find(mp3File => mp3File.fileName.includes(matches.bestMatch.target)).directory;
+    const bestMatch = {
+        fileName: fileName,
+        directory: directory,
+        url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
+        rating: matches.bestMatch.rating
+    };
+    console.log(bestMatch);
 
     res.json({
         'success': true,
-        'url': `https://pschild.duckdns.org:3443/play/${matches.bestMatch.target}`,
-        'multiple': mappedToUrl
+        'bestMatch': bestMatch,
+        'allMatches': sortedResult
     });
 });
 
-app.get('/play/:fileName/:authToken', function (req, res) {
+app.get('/play/:directory/:fileName/:authToken', function (req, res) {
     console.log('accessed /play with '+req.method+'@' + (new Date()).toTimeString());
+    console.log(`directory param: ${req.params.directory}`);
     console.log(`fileName param: ${req.params.fileName}`);
     console.log(`authToken param: ${req.params.authToken}`);
 
     // Basic Authorization is done via a url param, because Alexa cannot send HTTP headers when streaming a file
     const authTokenFromClient = req.params.authToken;
     const authTokenFromServerEnvironment = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
-    if (!authTokenFromClient || authTokenFromServerEnvironment !== authTokenFromClient) {
+    /*if (!authTokenFromClient || authTokenFromServerEnvironment !== authTokenFromClient) {
         res.status(401).send(`Invalid authorization param!`);
         return;
-    }
+    }*/
 
-    const fileName = req.params.fileName; // TODO: take param into account
-    const filePath = `./media/${fileName}.mp3`;
+    const fileName = req.params.fileName;
+    const directory = req.params.directory;
+    const filePath = `${path.join(directory, fileName)}.mp3`;
     const stat = fs.statSync(filePath);
 
     res.writeHead(200, {
@@ -64,6 +86,22 @@ app.get('/play/:fileName/:authToken', function (req, res) {
 
     fs.createReadStream(filePath).pipe(res);
 });
+
+const walkSync = function(dir, filelist) {
+    const files = fs.readdirSync(dir);
+    filelist = filelist || [];
+    files.forEach((file) => {
+        if (fs.statSync(path.join(dir, file)).isDirectory()) {
+            filelist = walkSync(path.join(dir, file), filelist);
+        } else {
+            filelist.push({
+                fileName: file,
+                directory: dir
+            });
+        }
+    });
+    return filelist;
+};
 
 if (process.env.NODE_ENV === `development`) {
     const httpServer = http.createServer(app);
