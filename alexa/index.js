@@ -18,6 +18,10 @@ const handlers = {
             if (response.success) {
                 const urlWithAuthToken = `${response.bestMatch.url}/${buildAuthToken()}`;
                 const songInformation = response.bestMatch.artist ? `${response.bestMatch.title} von ${response.bestMatch.artist}` : response.bestMatch.title;
+
+                this.attributes['currentSongIndex'] = 0;
+                this.attributes['songUrls'] = [urlWithAuthToken];
+
                 this.response
                     .speak(`Hier ist ${songInformation}`)
                     .audioPlayerPlay('REPLACE_ALL', urlWithAuthToken, urlWithAuthToken, null, 0);
@@ -48,6 +52,17 @@ const handlers = {
                 this.emit(':ask', `Ups. ${response.errorMessage}. Wie bitte?`);
             }
         });
+    },
+
+    'LikeSongIntent': function() {
+        const songUrls = this.attributes['songUrls'];
+        const currentSongIndex = this.attributes['currentSongIndex'];
+
+        this.emit(':tell', `${songUrls[currentSongIndex]} wird als Favorit hinzugefügt.`);
+    },
+
+    'PlayRandomSongsIntent': function() {
+        this.emit(':ask', `Das geht noch nicht.`);
     },
 
     'PlaybackNearlyFinished': function() {
