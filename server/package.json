@@ -18,6 +18,5 @@
     "lodash": "^4.17.5",
     "string-similarity": "^1.2.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
