@@ -1,6 +1,6 @@
 const routes = require('express').Router();
-const searchRoutes = require('./search');
-const playRoutes = require('./play');
+const searchRoutes = require('./search/index');
+const playRoutes = require('./play/index');
 
 routes.use(`/search`, searchRoutes);
 routes.use(`/play`, playRoutes);

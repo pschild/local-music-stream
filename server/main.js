@@ -7,7 +7,7 @@ const https = require('https');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
 const app = express();
-const routes = require('./routes');
+const routes = require('./routes/index');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
