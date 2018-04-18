@@ -7,8 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "set NODE_ENV=development&&node .",
-    "prod": "set NODE_ENV=production&&node .",
-    "build-alexa": "gulp build-alexa"
+    "prod": "set NODE_ENV=production&&node ."
   },
   "author": "Philippe Schild",
   "license": "MIT",
@@ -20,8 +19,5 @@
     "string-similarity": "^1.2.0"
   },
   "devDependencies": {
-    "gulp": "^4.0.0",
-    "gulp-tap": "^1.0.1",
-    "gulp-zip": "^4.1.0"
   }
 }
