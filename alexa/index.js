@@ -148,12 +148,12 @@ exports.handler = function(event, context, callback) {
 };
 
 function buildAuthToken() {
-    return Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
+    return Buffer.from(`${process.env.LMS_USERNAME}:${process.env.LMS_PASSWORD}`).toString('base64');
 }
 
 function search(payload, callback) {
     const body = JSON.stringify({'payload': payload});
-    const authToken = Buffer.from(`${process.env.USERNAME}:${process.env.PASSWORD}`).toString('base64');
+    const authToken = Buffer.from(`${process.env.LMS_USERNAME}:${process.env.LMS_PASSWORD}`).toString('base64');
 
     const options = {
         hostname: `pschild.duckdns.org`,
