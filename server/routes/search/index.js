@@ -1,10 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const stringSimilarity = require('string-similarity');
-const _ = require('lodash');
-
 const searchRoute = require('express').Router();
 
+const FilterResult = require('../../FilterResult');
 const FileController = require('../../FileController');
 const fileController = new FileController();
 
@@ -24,47 +20,15 @@ searchRoute.post(`/`, (req, res) => {
         });
     }
 
-    const songTitle = req.body.payload;
-
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    console.log(mediaFiles);
-    /*const mp3FileNamesWithoutExtension = mp3Files.map(file => file.fileName.slice(0, -4));
-
-    const matches = stringSimilarity.findBestMatch(songTitle, mp3FileNamesWithoutExtension);
-    const filteredMatches = matches.ratings.filter(match => match.rating >= 0.4);
-    const sortedByRatings = _.orderBy(filteredMatches, ['rating'], ['desc']);
-    const sortedResult = sortedByRatings.map(match => {
-        const fileName = match.target;
-        const songInformation = getSongInformation(fileName);
-        const directory = mp3Files.find(mp3File => mp3File.fileName.includes(match.target)).directory;
-        return {
-            fileName: fileName,
-            artist: songInformation.artist,
-            title: songInformation.title,
-            directory: directory,
-            url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
-            rating: match.rating
-        }
-    });
-    console.log(sortedResult);
-
-    const fileName = matches.bestMatch.target;
-    const songInformation = getSongInformation(fileName);
-    const directory = mp3Files.find(mp3File => mp3File.fileName.includes(matches.bestMatch.target)).directory;
-    const bestMatch = {
-        fileName: fileName,
-        artist: songInformation.artist,
-        title: songInformation.title,
-        directory: directory,
-        url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
-        rating: matches.bestMatch.rating
-    };
-    console.log(bestMatch);*/
+    let filterResult = new FilterResult(mediaFiles)
+        .filterByFilename(req.body.payload)
+        .orderBy('rating')
+        .all();
 
     res.json({
-        'success': true/*,
-        'bestMatch': bestMatch,
-        'allMatches': sortedResult*/
+        'success': true,
+        'result': filterResult
     });
 });
 

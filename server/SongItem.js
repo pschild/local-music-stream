@@ -7,7 +7,7 @@ module.exports = class SongItem {
 
         const separatorIndex = fileName.indexOf(this._artistSongSeparator);
         if (separatorIndex < 0) {
-            this.setArtist(null);
+            this.setArtist('');
             this.setTitle(fileName);
         } else {
             this.setArtist(fileName.substr(0, separatorIndex).trim());

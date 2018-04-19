@@ -14,6 +14,7 @@ module.exports = class FileController {
             .map(mediaFile => {
                 let songItem = new SongItem(mediaFile.fileNameWithoutExtension);
                 songItem.setDirectory(mediaFile.directory);
+                songItem.setUrl(`${process.env.BASE_URL}/play/${encodeURIComponent(mediaFile.directory)}/${mediaFile.fileNameWithoutExtension}`);
                 return songItem;
             });
     }
