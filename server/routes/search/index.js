@@ -1,7 +1,7 @@
 const searchRoute = require('express').Router();
 
-const FilterResult = require('../../FilterResult');
-const FileController = require('../../FileController');
+const FilterResult = require('../../filter/FilterResult');
+const FileController = require('../../file/FileController');
 const fileController = new FileController();
 
 searchRoute.post(`/artist`, (req, res) => {

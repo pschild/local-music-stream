@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
-const SongItem = require('./SongItem');
-const Cache = require('./Cache');
+const SongItem = require('../domain/SongItem');
+const Cache = require('../util/Cache');
 
 module.exports = class FileController {
 

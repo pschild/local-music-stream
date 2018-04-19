@@ -10,6 +10,7 @@ playRoute.get(`/:directory/:fileName/:authToken`, (req, res) => {
 
     // Basic Authorization is done via a url param, because Alexa cannot send HTTP headers when streaming a file
     const authTokenFromClient = req.params.authToken;
+    // TODO: put in class, see search routes (code duplication)
     const authTokenFromServerEnvironment = Buffer.from(`${process.env.LMS_USERNAME}:${process.env.LMS_PASSWORD}`).toString('base64');
     if (!authTokenFromClient || authTokenFromServerEnvironment !== authTokenFromClient) {
         res.status(401).send(`Invalid authorization param!`);
