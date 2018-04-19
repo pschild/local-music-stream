@@ -6,7 +6,7 @@ module.exports = class FilterResult {
     constructor(songItems = []) {
         this._songItems = songItems;
         this._matches = null;
-        this._ratingThreshold = 0;
+        this._ratingThreshold = 0.4;
     }
 
     filterByArtist(searchStr) {
