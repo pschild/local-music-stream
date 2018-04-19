@@ -1,11 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 const SongItem = require('./SongItem');
+const Cache = require('./Cache');
 
 module.exports = class FileController {
 
     constructor() {
         this._possibleFileExtensions = ['mp3'];
+        this._cache = new Cache();
     }
 
     getMediaFiles(dir, includeSubDirs = true) {
@@ -20,7 +22,10 @@ module.exports = class FileController {
     }
 
     getFileList(dir, includeSubDirs = true) {
-        return this.walkDir(dir, includeSubDirs);
+        if (this._cache.hasExpired()) {
+            this._cache.setItem('fileList', this.walkDir(dir, includeSubDirs));
+        }
+        return this._cache.getItem('fileList');
     }
 
     walkDir(dir, includeSubDirs, fileList = []) {
