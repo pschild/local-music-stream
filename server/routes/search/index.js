@@ -5,6 +5,9 @@ const _ = require('lodash');
 
 const searchRoute = require('express').Router();
 
+const FileController = require('../../FileController');
+const fileController = new FileController();
+
 // TODO: remove
 searchRoute.post(`/`, (req, res) => {
     if (!checkAuthorization(req.header('Authorization'))) {
@@ -23,9 +26,9 @@ searchRoute.post(`/`, (req, res) => {
 
     const songTitle = req.body.payload;
 
-    const allFiles = walkSync(process.env.ROOT_MEDIA_FOLDER);
-    const mp3Files = allFiles.filter(file => file.fileName.includes('mp3'));
-    const mp3FileNamesWithoutExtension = mp3Files.map(file => file.fileName.slice(0, -4));
+    const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
+    console.log(mediaFiles);
+    /*const mp3FileNamesWithoutExtension = mp3Files.map(file => file.fileName.slice(0, -4));
 
     const matches = stringSimilarity.findBestMatch(songTitle, mp3FileNamesWithoutExtension);
     const filteredMatches = matches.ratings.filter(match => match.rating >= 0.4);
@@ -56,12 +59,12 @@ searchRoute.post(`/`, (req, res) => {
         url: `https://pschild.duckdns.org:3443/play/${encodeURIComponent(directory)}/${fileName}`,
         rating: matches.bestMatch.rating
     };
-    console.log(bestMatch);
+    console.log(bestMatch);*/
 
     res.json({
-        'success': true,
+        'success': true/*,
         'bestMatch': bestMatch,
-        'allMatches': sortedResult
+        'allMatches': sortedResult*/
     });
 });
 
@@ -108,40 +111,6 @@ searchRoute.post(`/songs`, (req, res) => {
     const payload = req.body.payload;
     res.json({ 'result': 'OK' });
 });
-
-// TODO: put in class
-const walkSync = function(dir, filelist) {
-    const files = fs.readdirSync(dir);
-    filelist = filelist || [];
-    files.forEach((file) => {
-        if (fs.statSync(path.join(dir, file)).isDirectory()) {
-            filelist = walkSync(path.join(dir, file), filelist);
-        } else {
-            filelist.push({
-                fileName: file,
-                directory: dir
-            });
-        }
-    });
-    return filelist;
-};
-
-// TODO: put in class
-const getSongInformation = function(fileName) {
-    const SEPARATOR = '-';
-    const separatorIndex = fileName.indexOf(SEPARATOR);
-    if (separatorIndex < 0) {
-        return {
-            artist: null,
-            title: fileName
-        }
-    }
-
-    return {
-        artist: fileName.substr(0, separatorIndex).trim(),
-        title: fileName.substr(separatorIndex + 1).trim()
-    };
-};
 
 // TODO: put in class
 const checkAuthorization = function(authHeader) {
