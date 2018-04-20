@@ -49,7 +49,7 @@ searchRoute.post(`/artists`, (req, res) => {
 
     res.json({
         'success': true,
-        'result': filterResult
+        'result': JSON.stringify(filterResult)
     });
 });
 

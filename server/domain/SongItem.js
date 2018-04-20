@@ -54,4 +54,14 @@ module.exports = class SongItem {
     getDirectory() {
         return this._directory;
     }
+
+    toJSON() {
+        return {
+            artist: this._artist,
+            title: this._title,
+            url: this._url,
+            filename: this._filename,
+            directory: this._directory
+        }
+    }
 };
