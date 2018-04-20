@@ -1,0 +1,18 @@
+{
+  "name": "local-music-stream-alexa",
+  "version": "0.0.1",
+  "description": "",
+  "repository": "https://github.com/pschild/local-music-stream.git",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Philippe Schild",
+  "license": "MIT",
+  "dependencies": {
+    "alexa-app": "^4.2.2",
+    "axios": "^0.18.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3"
+  }
+}
