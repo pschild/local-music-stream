@@ -53,7 +53,8 @@ alexaApp.launch(function (request, response) {
 alexaApp.intent('PlayMusic', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
-    const songTitle = this.event.request.intent.slots.SONG_TITLE.value;
+    const songTitle = request.slots['SONG_TITLE'].value;
+    console.log(songTitle);
 
     return service.findSongs(`deichkind`).then(songItems => {
         player.setPlaylist(songItems);
@@ -66,7 +67,7 @@ alexaApp.intent('PlayMusic', function (request, response) {
 /*alexaApp.intent('PlayByArtist', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
-    const artist = this.event.request.intent.slots.ARTIST.value;
+    const artist = request.slots['ARTIST'].value;
 
     return service.findSongs(`deichkind`).then(songItems => {
         player.setPlaylist(songItems);
