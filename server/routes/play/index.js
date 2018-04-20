@@ -2,7 +2,17 @@ const path = require('path');
 const fs = require('fs');
 const playRoute = require('express').Router();
 
-playRoute.get(`/:directory/:fileName/:authToken`, (req, res) => {
+const authIsValid = require('../../util/auth');
+
+const checkAuth = (req, res, next) => {
+    const authToken = req.params.authToken;
+    if (!authIsValid(authToken)) {
+        return res.status(401).send(`Not authorized`);
+    }
+    return next();
+};
+
+playRoute.get(`/:directory/:fileName/:authToken`, checkAuth, (req, res) => {
     console.log('accessed /play with '+req.method+'@' + (new Date()).toTimeString());
     console.log(`directory param: ${req.params.directory}`);
     console.log(`fileName param: ${req.params.fileName}`);

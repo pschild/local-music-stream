@@ -4,18 +4,28 @@ const FilterResult = require('../../filter/FilterResult');
 const FileController = require('../../file/FileController');
 const fileController = new FileController();
 
+const authIsValid = require('../../util/auth');
+
+searchRoute.use((req, res, next) => {
+    const authToken = req.header('Authorization');
+    if (!authIsValid(authToken)) {
+        return res.status(401).send(`Not authorized`);
+    }
+    return next();
+});
+
+searchRoute.use((req, res, next) => {
+    if (!req.body.payload) {
+        return res.json({
+            'success': false,
+            'errorMessage': 'Ich habe deinen Suchbegriff nicht verstanden'
+        });
+    }
+    return next();
+});
+
 searchRoute.post(`/artist`, (req, res) => {
     console.log('accessed /search/artist');
-
-    if (!req.header('Authorization') || !checkAuthorizationHeader(req.header('Authorization'))) {
-        res.status(401).send(`Not authorized!`);
-        return;
-    }
-
-    if (!req.body.payload) {
-        sendMissingPayloadError(res);
-        return;
-    }
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)
@@ -30,16 +40,6 @@ searchRoute.post(`/artist`, (req, res) => {
 
 searchRoute.post(`/artists`, (req, res) => {
     console.log('accessed /search/artists');
-
-    if (!req.header('Authorization') || !checkAuthorizationHeader(req.header('Authorization'))) {
-        res.status(401).send(`Not authorized!`);
-        return;
-    }
-
-    if (!req.body.payload) {
-        sendMissingPayloadError(res);
-        return;
-    }
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)
@@ -56,16 +56,6 @@ searchRoute.post(`/artists`, (req, res) => {
 searchRoute.post(`/song`, (req, res) => {
     console.log('accessed /search/song');
 
-    if (!req.header('Authorization') || !checkAuthorizationHeader(req.header('Authorization'))) {
-        res.status(401).send(`Not authorized!`);
-        return;
-    }
-
-    if (!req.body.payload) {
-        sendMissingPayloadError(res);
-        return;
-    }
-
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)
         .filterByTitle(req.body.payload)
@@ -80,16 +70,6 @@ searchRoute.post(`/song`, (req, res) => {
 searchRoute.post(`/songs`, (req, res) => {
     console.log('accessed /search/songs');
 
-    if (!req.header('Authorization') || !checkAuthorizationHeader(req.header('Authorization'))) {
-        res.status(401).send(`Not authorized!`);
-        return;
-    }
-
-    if (!req.body.payload) {
-        sendMissingPayloadError(res);
-        return;
-    }
-
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)
         .filterByTitle(req.body.payload)
@@ -101,20 +81,5 @@ searchRoute.post(`/songs`, (req, res) => {
         'result': filterResult
     });
 });
-
-// TODO: put in class
-const checkAuthorizationHeader = function(authHeader) {
-    const authValue = authHeader.replace(/^Basic /, '');
-    const authTokenFromServerEnvironment = Buffer.from(`${process.env.LMS_USERNAME}:${process.env.LMS_PASSWORD}`).toString('base64');
-    return authValue === authTokenFromServerEnvironment;
-};
-
-// TODO: put in class
-const sendMissingPayloadError = function(res) {
-    res.json({
-        'success': false,
-        'errorMessage': 'Ich habe deinen Suchbegriff nicht verstanden'
-    });
-};
 
 module.exports = searchRoute;
