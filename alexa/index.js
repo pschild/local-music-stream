@@ -50,14 +50,14 @@ alexaApp.launch(function (request, response) {
     }
 });
 
-alexaApp.intent('PlayMusic', function (request, response) {
+alexaApp.intent('PlaySongByTitle', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
     const songTitle = request.slots['SONG_TITLE'].value;
     console.log(songTitle);
 
-    return service.findSongs(`deichkind`).then(songItems => {
-        player.setPlaylist(songItems);
+    return service.findOneBySongTitle(songTitle).then(songItem => {
+        player.setPlaylist(songItem);
 
         response.say(`Ab geht die Post`);
         player.play(response);

@@ -9,6 +9,9 @@ const Player = function (songItems = []) {
     this._stoppedAtMilliseconds = 0;
 
     this.setPlaylist = (songItems) => {
+        if (!Array.isArray(songItems)) {
+            songItems = [songItems];
+        }
         this._playlist = songItems;
     };
 

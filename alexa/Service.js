@@ -14,8 +14,18 @@ const Service = function () {
         }
     });
 
-    this.findSongs = (searchString) => {
-        return this._endpoint.post(`search/artists`, { payload: searchString })
+    this.findOneBySongTitle = (searchString) => {
+        return this._endpoint.post(`search/song`, { payload: searchString })
+            .then(response => {
+                let resultItem = JSON.parse(response.data.result);
+                let songItem = resultItem.document;
+                songItem.url += `/${this._buildBasicAuthToken()}`;
+                return songItem;
+            });
+    };
+
+    this.findManyBySongTitle = (searchString) => {
+        return this._endpoint.post(`search/songs`, { payload: searchString })
             .then(response => {
                 let resultItems = JSON.parse(response.data.result);
                 let songItems = resultItems.map(resultItem => resultItem.document);
