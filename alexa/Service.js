@@ -4,6 +4,7 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
+// TODO: make class
 const Service = function () {
     this._endpoint = axios.create({
         baseURL: process.env.BASE_URL,

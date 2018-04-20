@@ -15,6 +15,7 @@ const DB = new Database();
 const PORT = 61098;
 const app = express();
 
+// TODO: rename
 const alexaApp = new alexa.app('state-poc');
 
 alexaApp.express({

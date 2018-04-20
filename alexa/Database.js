@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO: make class
 const Database = function () {
     this._storage = {};
 

@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO: make class
 const Player = function (songItems = []) {
     // "constructor"
     this._playlist = songItems;
