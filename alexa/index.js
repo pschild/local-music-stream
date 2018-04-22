@@ -73,7 +73,7 @@ alexaApp.intent('LikeCurrentSong', function (request, response) {
     console.log('LikeCurrentSong');
     const current = player.getCurrent();
     if (!current) {
-        response.say(`Ich konnte kein aktuelles Lied finden.`);
+        return response.say(`Ich konnte kein aktuelles Lied finden.`);
     }
     player.addToFavorites(current);
     response.say(`Das Lied ${current.title} von ${current.artist} wurde zu deinen Favoriten hinzugefügt.`);
