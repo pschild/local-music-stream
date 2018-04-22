@@ -72,7 +72,7 @@ alexaApp.intent('PlaySongByTitle', function (request, response) {
 alexaApp.intent('LikeCurrentSong', function (request, response) {
     console.log('LikeCurrentSong');
     const current = player.getCurrent();
-    if (current) {
+    if (!current) {
         response.say(`Ich konnte kein aktuelles Lied finden.`);
     }
     player.addToFavorites(current);
