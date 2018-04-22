@@ -32,7 +32,7 @@ alexaApp.launch(function (request, response) {
 
     if (DB.get('state') === constants.states.PLAYMODE) {
         response.say(`Willkommen zurück`);
-        player.play(response);
+        // player.play(response);
     } else {
         response.say(`Herzlich Willkommen`).shouldEndSession(false);
     }
@@ -42,7 +42,7 @@ alexaApp.intent('PlaySongByTitle', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
     const songTitle = request.slot('SONG_TITLE');
-    console.log(songTitle);
+    console.log(`songTitle=${songTitle}`);
     if (!songTitle) {
         response.say(`Das hab ich nicht verstanden`);
         return;
@@ -69,12 +69,15 @@ alexaApp.intent('PlaySongByTitle', function (request, response) {
     });
 });*/
 
-/*alexaApp.intent('LikeSong', function (request, response) {
-    console.log('LikeSong');
+alexaApp.intent('LikeCurrentSong', function (request, response) {
+    console.log('LikeCurrentSong');
     const current = player.getCurrent();
+    if (current) {
+        response.say(`Ich konnte kein aktuelles Lied finden.`);
+    }
     player.addToFavorites(current);
     response.say(`Das Lied ${current.title} von ${current.artist} wurde zu deinen Favoriten hinzugefügt.`);
-});*/
+});
 
 alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
     console.log('AMAZON.CancelIntent');
