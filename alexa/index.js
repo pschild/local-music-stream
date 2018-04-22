@@ -44,8 +44,7 @@ alexaApp.intent('PlaySongByTitle', function (request, response) {
     const songTitle = request.slot('SONG_TITLE');
     console.log(`songTitle=${songTitle}`);
     if (!songTitle) {
-        response.say(`Das hab ich nicht verstanden`);
-        return;
+        return response.say(`Das hab ich nicht verstanden`);
     }
 
     return service.findOneBySongTitle(songTitle).then(songItem => {
@@ -56,18 +55,18 @@ alexaApp.intent('PlaySongByTitle', function (request, response) {
     });
 });
 
-/*alexaApp.intent('PlayByArtist', function (request, response) {
+alexaApp.intent('PlaySongByArtist', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
-    const artist = request.slots['ARTIST'].value;
-
-    return service.findSongs(`deichkind`).then(songItems => {
+    const artist = request.slot('ARTIST');
+    console.log(`artist=${artist}`);
+    return service.findOneByArtist(artist).then(songItems => {
         player.setPlaylist(songItems);
 
         response.say(`Ab geht die Post`);
         player.play(response);
     });
-});*/
+});
 
 alexaApp.intent('LikeCurrentSong', function (request, response) {
     console.log('LikeCurrentSong');

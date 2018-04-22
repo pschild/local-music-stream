@@ -34,6 +34,16 @@ const Service = function () {
             });
     };
 
+    this.findOneByArtist = (searchString) => {
+        return this._endpoint.post(`search/artist`, { payload: searchString })
+            .then(response => {
+                let resultItem = response.data.result;
+                let songItem = resultItem.document;
+                songItem.url += `/${this._buildBasicAuthToken()}`;
+                return songItem;
+            });
+    };
+
     this._appendBasicAuthToken = (songItem) => {
         songItem.url += `/${this._buildBasicAuthToken()}`;
     };
