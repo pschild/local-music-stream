@@ -23,7 +23,7 @@ alexaApp.express({
     debug: true
 });
 
-let player = new Player(URLS);
+let player = new Player();
 
 alexaApp.launch(function (request, response) {
     if (DB.size() === 0) {
