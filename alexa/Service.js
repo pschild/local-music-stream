@@ -17,7 +17,7 @@ const Service = function () {
     this.findOneBySongTitle = (searchString) => {
         return this._endpoint.post(`search/song`, { payload: searchString })
             .then(response => {
-                let resultItem = JSON.parse(response.data.result);
+                let resultItem = response.data.result;
                 let songItem = resultItem.document;
                 songItem.url += `/${this._buildBasicAuthToken()}`;
                 return songItem;

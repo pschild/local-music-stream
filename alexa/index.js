@@ -23,18 +23,6 @@ alexaApp.express({
     debug: true
 });
 
-/*
-{url: 'https://pschild.duckdns.org:3443/play/%2Fmedia%2Fpi%2FINTENSO%2FSpotify/Deichkind - Naschfuchs/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Naschfuchs'},
-{url: 'https://pschild.duckdns.org:3443/play/%2Fmedia%2Fpi%2FINTENSO%2FSpotify/Deichkind - Like mich am Arsch/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Like mich am Arsch'},
-{url: 'https://pschild.duckdns.org:3443/play/%2Fmedia%2Fpi%2FINTENSO%2FSpotify/Deichkind - Roll das Fass rein/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Roll das Fass rein'},
-{url: 'https://pschild.duckdns.org:3443/play/%2Fmedia%2Fpi%2FINTENSO%2FSpotify/Deichkind - Hauptsache nichts mit Menschen/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Hauptsache nichts mit Menschen'},
-*/
-const URLS = [
-    {url: 'https://pschild.duckdns.org:3443/play/media/Deichkind%20-%20Der%20Mond-trim/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Der Mond'},
-    {url: 'https://pschild.duckdns.org:3443/play/media/Deichkind%20-%20Luftbahn-trim/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Luftbahn'},
-    {url: 'https://pschild.duckdns.org:3443/play/media/Deichkind%20-%20Limit-trim/cHNjaGlsZDpnZWhlaW0=', artist: 'Deichkind', title: 'Limit'}
-];
-
 let player = new Player(URLS);
 
 alexaApp.launch(function (request, response) {
@@ -53,8 +41,12 @@ alexaApp.launch(function (request, response) {
 alexaApp.intent('PlaySongByTitle', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
-    const songTitle = request.slots['SONG_TITLE'].value;
+    const songTitle = request.slot('SONG_TITLE');
     console.log(songTitle);
+    if (!songTitle) {
+        response.say(`Das hab ich nicht verstanden`);
+        return;
+    }
 
     return service.findOneBySongTitle(songTitle).then(songItem => {
         player.setPlaylist(songItem);
@@ -77,12 +69,12 @@ alexaApp.intent('PlaySongByTitle', function (request, response) {
     });
 });*/
 
-alexaApp.intent('LikeSong', function (request, response) {
+/*alexaApp.intent('LikeSong', function (request, response) {
     console.log('LikeSong');
     const current = player.getCurrent();
     player.addToFavorites(current);
     response.say(`Das Lied ${current.title} von ${current.artist} wurde zu deinen Favoriten hinzugefügt.`);
-});
+});*/
 
 alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
     console.log('AMAZON.CancelIntent');
