@@ -38,32 +38,41 @@ alexaApp.launch(function (request, response) {
     }
 });
 
-alexaApp.intent('PlaySongByTitle', function (request, response) {
+alexaApp.intent('PlaySong', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
-    const songTitle = request.slot('SONG_TITLE');
-    console.log(`songTitle=${songTitle}`);
-    if (!songTitle) {
+    const title = request.slot('SONG_TITLE');
+    const artist = request.slot('ARTIST'); // optional
+    console.log(`songTitle=${songTitle}, artist=${artist}`);
+    if (!title) {
         return response.say(`Das hab ich nicht verstanden`);
     }
 
-    return service.findOneBySongTitle(songTitle).then(songItem => {
+    return service.findOne({title: title, artist: artist}).then(songItem => {
         player.setPlaylist(songItem);
 
-        response.say(`Ab geht die Post`);
+        if (artist) {
+            response.say(`${title} von ${artist} wird abgespielt`);
+        } else {
+            response.say(`${title} wird abgespielt`);
+        }
         player.play(response);
     });
 });
 
-alexaApp.intent('PlaySongByArtist', function (request, response) {
+alexaApp.intent('PlaySongs', function (request, response) {
     DB.set('state', constants.states.PLAYMODE);
 
     const artist = request.slot('ARTIST');
     console.log(`artist=${artist}`);
-    return service.findOneByArtist(artist).then(songItems => {
+    if (!artist) {
+        return response.say(`Das hab ich nicht verstanden`);
+    }
+
+    return service.findMany({artist: artist}).then(songItems => {
         player.setPlaylist(songItems);
 
-        response.say(`Ab geht die Post`);
+        response.say(`Lieder von ${artist} werden abgespielt`);
         player.play(response);
     });
 });

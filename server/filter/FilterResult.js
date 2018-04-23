@@ -10,17 +10,23 @@ module.exports = class FilterResult {
     }
 
     filterByArtist(searchStr) {
-        this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getArtist());
+        if (searchStr) {
+            this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getArtist());
+        }
         return this;
     }
 
     filterByTitle(searchStr) {
-        this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getTitle());
+        if (searchStr) {
+            this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getTitle());
+        }
         return this;
     }
 
     filterByFilename(searchStr) {
-        this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getFilename());
+        if (searchStr) {
+            this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getFilename());
+        }
         return this;
     }
 
@@ -33,6 +39,16 @@ module.exports = class FilterResult {
     shuffle() {
         this._matches.ratings.sort((a, b) => Math.random() - 0.5);
         return this;
+    }
+
+    // TODO: test method!
+    random() {
+        if (!this._matches) {
+            throw `FilterResult does not contain any matches.`;
+        }
+        this._matches.ratings.filter(match => match.rating >= this._ratingThreshold);
+        this.shuffle();
+        return this._matches[0];
     }
 
     best() {

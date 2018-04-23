@@ -24,6 +24,40 @@ searchRoute.use((req, res, next) => {
     return next();
 });
 
+searchRoute.post(`/one`, (req, res) => {
+    console.log('accessed /search/one');
+
+    const {title, artist} = req.body.payload;
+
+    const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
+    let filterResult = new FilterResult(mediaFiles)
+        .filterByTitle(title)
+        .filterByArtist(artist)
+        .best();
+
+    res.json({
+        'success': true,
+        'result': filterResult
+    });
+});
+
+searchRoute.post(`/many`, (req, res) => {
+    console.log('accessed /search/many');
+
+    const artist = req.body.payload.artist;
+
+    const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
+    let filterResult = new FilterResult(mediaFiles)
+        .filterByArtist(artist)
+        .orderBy('rating')
+        .all();
+
+    res.json({
+        'success': true,
+        'result': filterResult
+    });
+});
+
 searchRoute.post(`/artist`, (req, res) => {
     console.log('accessed /search/artist');
 

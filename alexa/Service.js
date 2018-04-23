@@ -14,8 +14,8 @@ const Service = function () {
         }
     });
 
-    this.findOneBySongTitle = (searchString) => {
-        return this._endpoint.post(`search/song`, { payload: searchString })
+    this.findOne = (payload) => {
+        return this._endpoint.post(`search/one`, { payload: payload })
             .then(response => {
                 let resultItem = response.data.result;
                 let songItem = resultItem.document;
@@ -24,23 +24,13 @@ const Service = function () {
             });
     };
 
-    this.findManyBySongTitle = (searchString) => {
-        return this._endpoint.post(`search/songs`, { payload: searchString })
+    this.findMany = (payload) => {
+        return this._endpoint.post(`search/many`, { payload: payload })
             .then(response => {
                 let resultItems = JSON.parse(response.data.result);
                 let songItems = resultItems.map(resultItem => resultItem.document);
                 songItems.forEach(this._appendBasicAuthToken);
                 return songItems;
-            });
-    };
-
-    this.findOneByArtist = (searchString) => {
-        return this._endpoint.post(`search/artist`, { payload: searchString })
-            .then(response => {
-                let resultItem = response.data.result;
-                let songItem = resultItem.document;
-                songItem.url += `/${this._buildBasicAuthToken()}`;
-                return songItem;
             });
     };
 
