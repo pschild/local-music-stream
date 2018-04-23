@@ -62,7 +62,6 @@ searchRoute.post(`/one/random`, (req, res) => {
     console.log('accessed /search/one/random');
 
     const artist = req.body.payload.artist;
-    console.log(artist);
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)

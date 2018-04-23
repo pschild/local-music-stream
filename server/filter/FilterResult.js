@@ -45,10 +45,9 @@ module.exports = class FilterResult {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
-        console.log(this._matches);
         this._matches.ratings.filter(match => match.rating >= this._ratingThreshold);
         this.shuffle();
-        return this._matches[0];
+        return this._matches.ratings[0];
     }
 
     getBest() {
