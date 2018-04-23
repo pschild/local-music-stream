@@ -33,7 +33,7 @@ searchRoute.post(`/one`, (req, res) => {
     let filterResult = new FilterResult(mediaFiles)
         .filterByTitle(title)
         .filterByArtist(artist)
-        .best();
+        .getBest();
 
     res.json({
         'success': true,
@@ -50,7 +50,7 @@ searchRoute.post(`/many`, (req, res) => {
     let filterResult = new FilterResult(mediaFiles)
         .filterByArtist(artist)
         .orderBy('rating')
-        .all();
+        .getAll();
 
     res.json({
         'success': true,
@@ -58,13 +58,15 @@ searchRoute.post(`/many`, (req, res) => {
     });
 });
 
-searchRoute.post(`/artist`, (req, res) => {
-    console.log('accessed /search/artist');
+searchRoute.post(`/one/random`, (req, res) => {
+    console.log('accessed /search/one/random');
+
+    const artist = req.body.payload.artist;
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)
-        .filterByArtist(req.body.payload)
-        .best();
+        .filterByArtist(artist)
+        .getRandom();
 
     res.json({
         'success': true,
@@ -72,43 +74,16 @@ searchRoute.post(`/artist`, (req, res) => {
     });
 });
 
-searchRoute.post(`/artists`, (req, res) => {
-    console.log('accessed /search/artists');
+searchRoute.post(`/many/random`, (req, res) => {
+    console.log('accessed /search/many/random');
+
+    const artist = req.body.payload.artist;
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
     let filterResult = new FilterResult(mediaFiles)
-        .filterByArtist(req.body.payload)
-        .orderBy('rating')
-        .all();
-
-    res.json({
-        'success': true,
-        'result': JSON.stringify(filterResult)
-    });
-});
-
-searchRoute.post(`/song`, (req, res) => {
-    console.log('accessed /search/song');
-
-    const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    let filterResult = new FilterResult(mediaFiles)
-        .filterByTitle(req.body.payload)
-        .best();
-
-    res.json({
-        'success': true,
-        'result': filterResult
-    });
-});
-
-searchRoute.post(`/songs`, (req, res) => {
-    console.log('accessed /search/songs');
-
-    const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    let filterResult = new FilterResult(mediaFiles)
-        .filterByTitle(req.body.payload)
-        .orderBy('rating')
-        .all();
+        .filterByArtist(artist)
+        .shuffle()
+        .getAll();
 
     res.json({
         'success': true,

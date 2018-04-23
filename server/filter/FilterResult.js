@@ -41,8 +41,7 @@ module.exports = class FilterResult {
         return this;
     }
 
-    // TODO: test method!
-    random() {
+    getRandom() {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
@@ -51,14 +50,14 @@ module.exports = class FilterResult {
         return this._matches[0];
     }
 
-    best() {
+    getBest() {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
         return this._matches.bestMatch;
     }
 
-    all() {
+    getAll() {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
