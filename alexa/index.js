@@ -52,9 +52,9 @@ alexaApp.intent('PlaySong', function (request, response) {
         player.setPlaylist(songItem);
 
         if (artist) {
-            response.say(`${title} von ${artist} wird abgespielt`);
+            response.say(`${songItem.title} von ${songItem.artist} wird abgespielt`);
         } else {
-            response.say(`${title} wird abgespielt`);
+            response.say(`${songItem.title} wird abgespielt`);
         }
         player.play(response);
     });
