@@ -43,7 +43,7 @@ alexaApp.intent('PlaySong', function (request, response) {
 
     const title = request.slot('SONG_TITLE');
     const artist = request.slot('ARTIST'); // optional
-    console.log(`songTitle=${songTitle}, artist=${artist}`);
+    console.log(`songTitle=${title}, artist=${artist}`);
     if (!title) {
         return response.say(`Das hab ich nicht verstanden`);
     }
