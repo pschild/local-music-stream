@@ -31,7 +31,7 @@ alexaApp.launch(function (request, response) {
     }
 
     if (DB.get('state') === constants.states.PLAYMODE) {
-        response.say(`Willkommen zurück`);
+        response.say(`Willkommen zurück`).shouldEndSession(false);
         // player.play(response);
     } else {
         response.say(`Herzlich Willkommen`).shouldEndSession(false);
