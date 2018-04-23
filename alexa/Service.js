@@ -27,7 +27,7 @@ const Service = function () {
     this.findMany = (payload) => {
         return this._endpoint.post(`search/many`, { payload: payload })
             .then(response => {
-                let resultItems = JSON.parse(response.data.result);
+                let resultItems = response.data.result;
                 let songItems = resultItems.map(resultItem => resultItem.document);
                 songItems.forEach(this._appendBasicAuthToken);
                 return songItems;
