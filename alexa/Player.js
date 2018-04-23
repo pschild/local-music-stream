@@ -86,6 +86,10 @@ module.exports = class Player {
         this._favorites.push(songItem);
     }
 
+    getFavorites() {
+        return this._favorites;
+    }
+
     getCurrent() {
         return this._playlist[this._currentlyPlayingIndex];
     }

@@ -94,7 +94,19 @@ alexaApp.intent('LikeCurrentSong', function (request, response) {
         return response.say(`Ich konnte kein aktuelles Lied finden.`);
     }
     player.addToFavorites(current);
-    response.say(`Das Lied ${current.title} von ${current.artist} wurde zu deinen Favoriten hinzugefügt.`);
+    response.say(`Das Lied ${current.title} von ${current.artist} wurde zu deinen Favoriten hinzugefügt`);
+});
+
+alexaApp.intent('PlayFavorites', function (request, response) {
+    console.log('PlayFavorites');
+
+    const favorites = player.getFavorites();
+    if (!favorites || !favorites.length) {
+        return response.say(`Du hast keine Lieder auf deiner Favoriten Liste`);
+    }
+    player.setPlaylist(favorites);
+    response.say(`Favoriten werden abgespielt`);
+    player.play(response);
 });
 
 alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
