@@ -7,6 +7,7 @@ module.exports = class Player {
     }
 
     setPlaylist(songItems) {
+        this.stop();
         if (!Array.isArray(songItems)) {
             songItems = [songItems];
         }
