@@ -18,6 +18,10 @@ module.exports = class Service {
         return this._endpoint.post(`search/one`, { payload: payload })
             .then(response => {
                 let resultItem = response.data.result;
+                if (!resultItem) {
+                    return;
+                }
+
                 let songItem = resultItem.document;
                 songItem.url += `/${this._buildBasicAuthToken()}`;
                 return songItem;
@@ -28,6 +32,10 @@ module.exports = class Service {
         return this._endpoint.post(`search/many`, { payload: payload })
             .then(response => {
                 let resultItems = response.data.result;
+                if (!resultItems || !resultItems.length) {
+                    return;
+                }
+
                 let songItems = resultItems.map(resultItem => resultItem.document);
                 songItems.forEach(this._appendBasicAuthToken);
                 return songItems;
