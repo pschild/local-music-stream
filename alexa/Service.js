@@ -37,13 +37,11 @@ module.exports = class Service {
                 }
 
                 let songItems = resultItems.map(resultItem => resultItem.document);
-                songItems.forEach(this._appendBasicAuthToken);
+                songItems.forEach(songItem => {
+                    songItem.url += `/${this._buildBasicAuthToken()}`;
+                });
                 return songItems;
             });
-    }
-
-    _appendBasicAuthToken(songItem) {
-        songItem.url += `/${this._buildBasicAuthToken()}`;
     }
 
     _buildBasicAuthToken() {
