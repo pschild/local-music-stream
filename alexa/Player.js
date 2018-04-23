@@ -1,21 +1,19 @@
-'use strict';
+module.exports = class Player {
 
-// TODO: make class
-const Player = function (songItems = []) {
-    // "constructor"
-    this._playlist = songItems;
-    this._favorites = [];
-    this._currentlyPlayingIndex = 0;
-    this._stoppedAtMilliseconds = 0;
+    constructor(songItems = []) {
+        this._favorites = [];
+        this.setPlaylist(songItems);
+        this.reset();
+    }
 
-    this.setPlaylist = (songItems) => {
+    setPlaylist(songItems) {
         if (!Array.isArray(songItems)) {
             songItems = [songItems];
         }
         this._playlist = songItems;
-    };
+    }
 
-    this.play = (response) => {
+    play(response) {
         const current = this.getCurrent();
         const stream = {
             'url': current.url,
@@ -24,19 +22,19 @@ const Player = function (songItems = []) {
             'offsetInMilliseconds': this._stoppedAtMilliseconds || 0
         };
         response.audioPlayerPlayStream('REPLACE_ALL', stream);
-    };
+    }
 
-    this.stop = (response, offset = 0) => {
+    stop(response, offset = 0) {
         this._stoppedAtMilliseconds = offset;
         response.audioPlayerStop();
-    };
+    }
 
-    this.reset = () => {
+    reset() {
         this._currentlyPlayingIndex = 0;
         this._stoppedAtMilliseconds = 0;
-    };
+    }
 
-    this.playNext = (response) => {
+    playNext(response) {
         const next = this.getNext();
 
         // change state
@@ -49,9 +47,9 @@ const Player = function (songItems = []) {
             'offsetInMilliseconds': 0
         };
         response.audioPlayerPlayStream('REPLACE_ALL', stream);
-    };
+    }
 
-    this.playPrevious = (response) => {
+    playPrevious(response) {
         const previous = this.getPrevious();
 
         // change state
@@ -64,9 +62,9 @@ const Player = function (songItems = []) {
             'offsetInMilliseconds': 0
         };
         response.audioPlayerPlayStream('REPLACE_ALL', stream);
-    };
+    }
 
-    this.enqueueNext = (response) => {
+    enqueueNext(response) {
         const current = this.getCurrent();
         const next = this.getNext();
 
@@ -77,44 +75,42 @@ const Player = function (songItems = []) {
             'offsetInMilliseconds': 0
         };
         response.audioPlayerPlayStream('ENQUEUE', stream);
-    };
+    }
 
-    this.handlePlaybackFinished = () => {
+    handlePlaybackFinished() {
         // change state
         this._currentlyPlayingIndex = this.getNextIndex();
-    };
+    }
 
-    this.addToFavorites = (songItem) => {
+    addToFavorites(songItem) {
         this._favorites.push(songItem);
-    };
+    }
 
-    this.getCurrent = () => {
+    getCurrent() {
         return this._playlist[this._currentlyPlayingIndex];
-    };
+    }
 
-    this.getNext = () => {
+    getNext() {
         return this._playlist[this.getNextIndex()];
-    };
+    }
 
-    this.getPrevious = () => {
+    getPrevious() {
         return this._playlist[this.getPreviousIndex()];
-    };
+    }
 
-    this.getNextIndex = () => {
+    getNextIndex() {
         if (this._currentlyPlayingIndex <= this._playlist.length - 2) {
             return this._currentlyPlayingIndex + 1;
         } else {
             return 0; // TODO: change this depending on loop state
         }
-    };
+    }
 
-    this.getPreviousIndex = () => {
+    getPreviousIndex() {
         if (this._currentlyPlayingIndex > 0) {
             return this._currentlyPlayingIndex - 1;
         } else {
             return this._playlist.length - 1; // TODO: change this depending on loop state
         }
-    };
+    }
 };
-
-module.exports = Player;

@@ -1,24 +1,22 @@
-'use strict';
+module.exports = class Database {
 
-// TODO: make class
-const Database = function () {
-    this._storage = {};
-
-    this.set = (key, value) => {
-        this._storage[key] = value;
-    };
-
-    this.get = (key) => {
-        return this._storage.hasOwnProperty(key) ? this._storage[key] : undefined;
-    };
-
-    this.size = () => {
-        return Object.keys(this._storage).length;
-    };
-
-    this.clear = () => {
+    constructor() {
         this._storage = {};
-    };
-};
+    }
 
-module.exports = Database;
+    set(key, value) {
+        this._storage[key] = value;
+    }
+
+    get(key) {
+        return this._storage.hasOwnProperty(key) ? this._storage[key] : undefined;
+    }
+
+    size() {
+        return Object.keys(this._storage).length;
+    }
+
+    clear() {
+        this._storage = {};
+    }
+};
