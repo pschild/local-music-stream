@@ -101,6 +101,7 @@ alexaApp.intent('PlayFavorites', function (request, response) {
     console.log('PlayFavorites');
 
     const favorites = player.getFavorites();
+    console.log(favorites);
     if (!favorites || !favorites.length) {
         return response.say(`Du hast keine Lieder auf deiner Favoriten Liste`);
     }
