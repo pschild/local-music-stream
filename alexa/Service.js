@@ -17,12 +17,11 @@ module.exports = class Service {
     findOne(payload) {
         return this._endpoint.post(`search/one`, { payload: payload })
             .then(response => {
-                let resultItem = response.data.result;
-                if (!resultItem) {
+                let songItem = response.data.result;
+                if (!songItem) {
                     return;
                 }
 
-                let songItem = resultItem.document;
                 songItem.url += `/${this._buildBasicAuthToken()}`;
                 return songItem;
             });
@@ -31,12 +30,11 @@ module.exports = class Service {
     findMany(payload) {
         return this._endpoint.post(`search/many`, { payload: payload })
             .then(response => {
-                let resultItems = response.data.result;
-                if (!resultItems || !resultItems.length) {
+                let songItems = response.data.result;
+                if (!songItems || !songItems.length) {
                     return;
                 }
 
-                let songItems = resultItems.map(resultItem => resultItem.document);
                 songItems.forEach(songItem => {
                     songItem.url += `/${this._buildBasicAuthToken()}`;
                 });
