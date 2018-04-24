@@ -1,43 +1,53 @@
 const _orderBy = require('lodash/orderBy');
+const _maxBy = require('lodash/maxBy');
 const stringSimilarity = require('./stringSimilarity');
 
 module.exports = class FilterResult {
 
     constructor(songItems = []) {
-        this._songItems = songItems;
-        this._matches = null;
+        this._matches = songItems;
         this._ratingThreshold = 0.4;
     }
 
     filterByArtist(searchStr) {
         if (searchStr) {
-            this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getArtist());
+            this._matches = stringSimilarity.setRatingsByProp(searchStr, this._matches, (songItem) => songItem.getArtist());
+            this.filterByRatingThreshold();
         }
         return this;
     }
 
     filterByTitle(searchStr) {
         if (searchStr) {
-            this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getTitle());
+            this._matches = stringSimilarity.setRatingsByProp(searchStr, this._matches, (songItem) => songItem.getTitle());
+            this.filterByRatingThreshold();
         }
         return this;
     }
 
     filterByFilename(searchStr) {
         if (searchStr) {
-            this._matches = stringSimilarity.findBestMatchByProp(searchStr, this._songItems, (songItem) => songItem.getFilename());
+            this._matches = stringSimilarity.setRatingsByProp(searchStr, this._matches, (songItem) => songItem.getFilename());
+            this.filterByRatingThreshold();
         }
         return this;
     }
 
-    orderBy(attribute, order = 'desc') {
-        // attribute can for example be 'rating' or (x) => x.document.getArtist()
-        this._matches.ratings = _orderBy(this._matches.ratings, [attribute], [order]);
+    filterByRatingThreshold() {
+        if (!this._matches) {
+            throw `FilterResult does not contain any matches.`;
+        }
+        this._matches = this._matches.filter(songItem => songItem.getRating() >= this._ratingThreshold);
+        return this;
+    }
+
+    orderBy(attributeFn, order = 'desc') {
+        this._matches = _orderBy(this._matches, [attributeFn], [order]);
         return this;
     }
 
     shuffle() {
-        this._matches.ratings.sort((a, b) => Math.random() - 0.5);
+        this._matches.sort((a, b) => Math.random() - 0.5);
         return this;
     }
 
@@ -45,23 +55,21 @@ module.exports = class FilterResult {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
-        this._matches.ratings.filter(match => match.rating >= this._ratingThreshold);
         this.shuffle();
-        return this._matches.ratings[0];
+        return this._matches[0];
     }
 
     getBest() {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
-        return this._matches.bestMatch;
+        return _maxBy(this._matches, (songItem) => songItem.getRating());
     }
 
     getAll() {
         if (!this._matches) {
             throw `FilterResult does not contain any matches.`;
         }
-        return this._matches.ratings
-            .filter(match => match.rating >= this._ratingThreshold);
+        return this._matches;
     }
 };

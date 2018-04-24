@@ -30,9 +30,9 @@ searchRoute.post(`/one`, (req, res) => {
     const {title, artist} = req.body.payload;
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    let filterResult = new FilterResult(mediaFiles)
-        .filterByTitle(title)
+    const filterResult = new FilterResult(mediaFiles)
         .filterByArtist(artist)
+        .filterByTitle(title)
         .getBest();
 
     res.json({
@@ -47,9 +47,9 @@ searchRoute.post(`/many`, (req, res) => {
     const artist = req.body.payload.artist;
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    let filterResult = new FilterResult(mediaFiles)
+    const filterResult = new FilterResult(mediaFiles)
         .filterByArtist(artist)
-        .orderBy('rating')
+        .orderBy((songItem) => songItem.getRating())
         .getAll();
 
     res.json({
@@ -64,7 +64,7 @@ searchRoute.post(`/one/random`, (req, res) => {
     const artist = req.body.payload.artist;
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    let filterResult = new FilterResult(mediaFiles)
+    const filterResult = new FilterResult(mediaFiles)
         .filterByArtist(artist)
         .getRandom();
 
@@ -80,7 +80,7 @@ searchRoute.post(`/many/random`, (req, res) => {
     const artist = req.body.payload.artist;
 
     const mediaFiles = fileController.getMediaFiles(process.env.ROOT_MEDIA_FOLDER);
-    let filterResult = new FilterResult(mediaFiles)
+    const filterResult = new FilterResult(mediaFiles)
         .filterByArtist(artist)
         .shuffle()
         .getAll();

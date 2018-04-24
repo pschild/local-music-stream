@@ -4,6 +4,7 @@ module.exports = class SongItem {
         this._artistSongSeparator = '-';
 
         this.setFilename(fileName);
+        this.setRating(0);
 
         const separatorIndex = fileName.indexOf(this._artistSongSeparator);
         if (separatorIndex < 0) {
@@ -35,6 +36,10 @@ module.exports = class SongItem {
         this._directory = dir;
     }
 
+    setRating(rating) {
+        this._rating = rating;
+    }
+
     getArtist() {
         return this._artist;
     }
@@ -55,13 +60,18 @@ module.exports = class SongItem {
         return this._directory;
     }
 
+    getRating() {
+        return this._rating;
+    }
+
     toJSON() {
         return {
             artist: this._artist,
             title: this._title,
             url: this._url,
             filename: this._filename,
-            directory: this._directory
+            directory: this._directory,
+            rating: this._rating
         }
     }
 };

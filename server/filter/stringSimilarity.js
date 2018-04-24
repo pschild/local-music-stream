@@ -12,7 +12,7 @@ var _flattenDeep = require('lodash/flattenDeep');
 
 exports.compareTwoStrings = compareTwoStrings;
 exports.findBestMatch = findBestMatch;
-exports.findBestMatchByProp = findBestMatchByProp;
+exports.setRatingsByProp = setRatingsByProp;
 
 function compareTwoStrings(str1, str2) {
     var result = null;
@@ -126,24 +126,15 @@ function findBestMatch(mainString, targetStrings) {
     }
 }
 
-function findBestMatchByProp(mainString, targetDocuments, mapFn) {
+function setRatingsByProp(mainString, targetDocuments, mapFn) {
     if (!areArgsValid(mainString, targetDocuments, mapFn)) {
         throw new Error('Bad arguments: First argument should be a string, second should be an array of documents, third should be a function');
     }
 
-    var ratings = _map(targetDocuments, function (doc) {
-        return {
-            document: doc,
-            target: mapFn(doc),
-            rating: compareTwoStrings(mainString, mapFn(doc))
-        };
-
+    targetDocuments.forEach(function (doc) {
+        doc.setRating(compareTwoStrings(mainString, mapFn(doc)));
     });
-
-    return {
-        ratings: ratings,
-        bestMatch: _maxBy(ratings, 'rating')
-    };
+    return targetDocuments;
 
     // private functions ---------------------------
     function areArgsValid(mainString, targetDocuments, mapFn) {
