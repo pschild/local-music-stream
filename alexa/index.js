@@ -51,9 +51,9 @@ alexaApp.intent('PlaySong', function (request, response) {
     return service.findOne({title: title, artist: artist}).then(songItem => {
         if (!songItem) {
             if (artist) {
-                return response.say(`Ich konnte das Lied ${songItem.title} von ${songItem.artist} nicht finden`);
+                return response.say(`Ich konnte das Lied ${title} von ${artist} nicht finden`);
             } else {
-                return response.say(`Ich konnte das Lied ${songItem.title} nicht finden`);
+                return response.say(`Ich konnte das Lied ${title} nicht finden`);
             }
         }
 
