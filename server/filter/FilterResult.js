@@ -1,6 +1,6 @@
 const _orderBy = require('lodash/orderBy');
 const _maxBy = require('lodash/maxBy');
-const stringSimilarity = require('./stringSimilarity');
+const stringSimilarity = require('string-similarity');
 
 module.exports = class FilterResult {
 
@@ -11,7 +11,7 @@ module.exports = class FilterResult {
 
     filterByArtist(searchStr) {
         if (searchStr) {
-            this._matches = stringSimilarity.setRatingsByProp(searchStr, this._matches, (songItem) => songItem.getArtist());
+            this._matches = this._rateDocumentsByProperty(searchStr, (songItem) => songItem.getArtist());
             this.filterByRatingThreshold();
         }
         return this;
@@ -19,7 +19,7 @@ module.exports = class FilterResult {
 
     filterByTitle(searchStr) {
         if (searchStr) {
-            this._matches = stringSimilarity.setRatingsByProp(searchStr, this._matches, (songItem) => songItem.getTitle());
+            this._matches = this._rateDocumentsByProperty(searchStr, (songItem) => songItem.getTitle());
             this.filterByRatingThreshold();
         }
         return this;
@@ -27,7 +27,7 @@ module.exports = class FilterResult {
 
     filterByFilename(searchStr) {
         if (searchStr) {
-            this._matches = stringSimilarity.setRatingsByProp(searchStr, this._matches, (songItem) => songItem.getFilename());
+            this._matches = this._rateDocumentsByProperty(searchStr, (songItem) => songItem.getFilename());
             this.filterByRatingThreshold();
         }
         return this;
@@ -71,5 +71,13 @@ module.exports = class FilterResult {
             throw `FilterResult does not contain any matches.`;
         }
         return this._matches;
+    }
+
+    _rateDocumentsByProperty(searchStr, mapFn) {
+        let targetDocuments = this._matches;
+        targetDocuments.forEach((document) => {
+            document.setRating(stringSimilarity.compareTwoStrings(searchStr, mapFn(document)));
+        });
+        return targetDocuments;
     }
 };
