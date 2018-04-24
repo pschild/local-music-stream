@@ -1,18 +1,18 @@
 module.exports = class SongItem {
 
     constructor(fileName) {
-        this._artistSongSeparator = '-';
+        this._artistSongSeparator = ' - ';
 
         this.setFilename(fileName);
         this.setRating(0);
 
-        const separatorIndex = fileName.indexOf(this._artistSongSeparator);
+        const separatorIndex = fileName.lastIndexOf(this._artistSongSeparator);
         if (separatorIndex < 0) {
             this.setArtist('');
             this.setTitle(fileName);
         } else {
             this.setArtist(fileName.substr(0, separatorIndex).trim());
-            this.setTitle(fileName.substr(separatorIndex + 1).trim());
+            this.setTitle(fileName.substr(separatorIndex + this._artistSongSeparator.length).trim());
         }
     }
 
